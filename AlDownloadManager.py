@@ -15,6 +15,7 @@ class AlDownloadManager():
     def __init__(self):
         root = Tk(className = " ALDOWNLOADMANAGER ")
         root.geometry("700x350+1200+645")
+        root.resizable(0,0)
         root.iconbitmap(os.path.join(cwd+'\\UI\\icons', 'aldownloadmanager.ico'))
         root.config(bg="#ffffff")
         self.defaultColor = ''
