@@ -1,6 +1,6 @@
 # AlDownloadManager
 
-A python script based GUI interface to download files.
+A python script based GUI interface to download files in the system.
 
 ## Installation
 
