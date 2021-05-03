@@ -41,12 +41,14 @@ class AlDownloadManager():
             engine.runAndWait()
         
         def terminate(object):
-            object.stop()
+            if object:
+                object.stop()
             pauseButton['state'] = DISABLED
             stopButton['text'] = 'STOP'
             stopButton['state'] = DISABLED
             stopButton['bg'] = self.defaultColor
             pauseButton['text'] = "PAUSE"
+            downloadButton['state'] = NORMAL
 
         def pauseResume(object):
             if self.isPaused:
@@ -73,7 +75,8 @@ class AlDownloadManager():
             def doDownload(sem):
                 with sem:
                     try:
-                        self.downloadObject.start()
+                        if self.downloadObject:
+                            self.downloadObject.start()
                     except Exception as e:
                         print(f"------> {e}")
                         print(f"object error ---> {self.downloadObject.get_errors()}")
@@ -84,33 +87,34 @@ class AlDownloadManager():
                 with sem:
                     time.sleep(1)
                     startTime = time.perf_counter()
-                    while not self.downloadObject.isFinished() and len(self.downloadObject.get_errors()) == 0:
-                        self.statusMessage.set(f"   Status: {self.downloadObject.get_status().capitalize()}")
-                        self.speedMessage.set(f"   Speed: {self.downloadObject.get_speed(human=True)}")
-                        self.destinationMessage.set(f"   Working directory: {self.destination}")
-                        self.sizeMessage.set(f"   Downloaded so far: {self.downloadObject.get_dl_size(human=True)}")
-                        self.timeMessage.set(f"   Elapsed Time: {round(time.perf_counter() - startTime, 1)}" if self.downloadObject.get_status() != 'paused' else '   Elapsed Time: . . . ')
-                        progress['value'] = 100 * self.downloadObject.get_progress()
-                        time.sleep(0.2)
-                        root.update_idletasks()
-                    if len(self.downloadObject.get_errors()) == 0:
-                        startPoint = time.perf_counter()
-                        while time.perf_counter() - startPoint < 2:
+                    if self.downloadObject:
+                        while not self.downloadObject.isFinished() and len(self.downloadObject.get_errors()) == 0:
                             self.statusMessage.set(f"   Status: {self.downloadObject.get_status().capitalize()}")
                             self.speedMessage.set(f"   Speed: {self.downloadObject.get_speed(human=True)}")
-                            self.destinationMessage.set(f"   Saved at: {self.downloadObject.get_dest()}")
-                            self.sizeMessage.set(f"   Total File Size: {self.downloadObject.get_final_filesize(human=True)}")
-                            self.timeMessage.set(f"   Total Time: {str(self.downloadObject.get_dl_time(human=True))}")
+                            self.destinationMessage.set(f"   Working directory: {self.destination}")
+                            self.sizeMessage.set(f"   Downloaded so far: {self.downloadObject.get_dl_size(human=True)}")
+                            self.timeMessage.set(f"   Elapsed Time: {round(time.perf_counter() - startTime, 1)}" if self.downloadObject.get_status() != 'paused' else '   Elapsed Time: . . . ')
                             progress['value'] = 100 * self.downloadObject.get_progress()
                             time.sleep(0.2)
                             root.update_idletasks()
+                        if len(self.downloadObject.get_errors()) == 0:
+                            startPoint = time.perf_counter()
+                            while time.perf_counter() - startPoint < 2:
+                                self.statusMessage.set(f"   Status: {self.downloadObject.get_status().capitalize()}")
+                                self.speedMessage.set(f"   Speed: {self.downloadObject.get_speed(human=True)}")
+                                self.destinationMessage.set(f"   Saved at: {self.downloadObject.get_dest()}")
+                                self.sizeMessage.set(f"   Total File Size: {self.downloadObject.get_final_filesize(human=True)}")
+                                self.timeMessage.set(f"   Total Time: {str(self.downloadObject.get_dl_time(human=True))}")
+                                progress['value'] = 100 * self.downloadObject.get_progress()
+                                time.sleep(0.2)
+                                root.update_idletasks()
                             if progress['value'] == 100:
                                 speak('File Downloaded')
-                    else:
-                        self.statusMessage.set(f"   Status: Download Failed")
-                        self.speedMessage.set(f"   Reason: {self.downloadObject.get_errors()[0]}")
-                        root.update_idletasks()
-                        speak('Download Failed')
+                        else:
+                            self.statusMessage.set(f"   Status: Download Failed")
+                            self.speedMessage.set(f"   Reason: {self.downloadObject.get_errors()[0]}")
+                            root.update_idletasks()
+                            speak('Download Failed')
 
             if len(url) == 0:
                 downloadButton.flash()
@@ -202,7 +206,7 @@ class AlDownloadManager():
         frameInput = Frame(root, relief=RIDGE, borderwidth=0, bg='#333c4e')
         frameInput.pack(fill=BOTH, expand=1)
         
-        frameStatus = LabelFrame(root, text="  Information", relief=SUNKEN, bg='#16a4fa', borderwidth=0,font=textHighlightFont,fg='white')
+        frameStatus = LabelFrame(root, text="  Information----------------------------------------------------------------------", relief=SUNKEN, bg='#16a4fa', borderwidth=0,font=textHighlightFont,fg='white')
         frameStatus.pack(fill=BOTH, expand=1)
         
         frameProgress = Frame(root, relief=GROOVE, borderwidth=0, bg='white')
