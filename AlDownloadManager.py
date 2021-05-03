@@ -7,6 +7,7 @@ from pySmartDL import SmartDL
 import threading
 import os
 import pyttsx3
+import sys
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 
@@ -44,19 +45,20 @@ class AlDownloadManager():
             pauseButton['state'] = DISABLED
             stopButton['text'] = 'STOP'
             stopButton['state'] = DISABLED
-            stopButton['bg'] = '#333c4e'
+            stopButton['bg'] = self.defaultColor
+            pauseButton['text'] = "PAUSE"
 
         def pauseResume(object):
             if self.isPaused:
                 object.resume()
                 pauseButton['text'] = "PAUSE"
-                pauseButton['fg'] = "#9cabc4"
+                pauseButton['fg'] = "white"
                 pauseButton.flash()
                 self.isPaused = not self.isPaused
             else:
                 object.pause()
                 pauseButton['text'] = "RESUME"
-                pauseButton['fg'] = "#9cabc4"
+                pauseButton['fg'] = "white"
                 pauseButton.flash()
                 self.isPaused = not self.isPaused
 
@@ -75,7 +77,7 @@ class AlDownloadManager():
                     except Exception as e:
                         print(f"------> {e}")
                         print(f"object error ---> {self.downloadObject.get_errors()}")
-                        self.statusMessage.set(f"Status: {e}")
+                        self.statusMessage.set(f"   Status: {e}")
                         root.update_idletasks()
 
             def showProgress(sem):
@@ -83,11 +85,11 @@ class AlDownloadManager():
                     time.sleep(1)
                     startTime = time.perf_counter()
                     while not self.downloadObject.isFinished() and len(self.downloadObject.get_errors()) == 0:
-                        self.statusMessage.set(f"Status: {self.downloadObject.get_status().capitalize()}")
-                        self.speedMessage.set(f"Speed: {self.downloadObject.get_speed(human=True)}")
-                        self.destinationMessage.set(f"Working directory: {self.destination}")
-                        self.sizeMessage.set(f"Downloaded so far: {self.downloadObject.get_dl_size(human=True)}")
-                        self.timeMessage.set(f"Elapsed Time: {round(time.perf_counter() - startTime, 1)}" if self.downloadObject.get_status() != 'paused' else 'Elapsed Time: . . . ')
+                        self.statusMessage.set(f"   Status: {self.downloadObject.get_status().capitalize()}")
+                        self.speedMessage.set(f"   Speed: {self.downloadObject.get_speed(human=True)}")
+                        self.destinationMessage.set(f"   Working directory: {self.destination}")
+                        self.sizeMessage.set(f"   Downloaded so far: {self.downloadObject.get_dl_size(human=True)}")
+                        self.timeMessage.set(f"   Elapsed Time: {round(time.perf_counter() - startTime, 1)}" if self.downloadObject.get_status() != 'paused' else '   Elapsed Time: . . . ')
                         progress['value'] = 100 * self.downloadObject.get_progress()
                         time.sleep(0.2)
                         root.update_idletasks()
@@ -102,10 +104,11 @@ class AlDownloadManager():
                             progress['value'] = 100 * self.downloadObject.get_progress()
                             time.sleep(0.2)
                             root.update_idletasks()
-                            speak('File Downloaded')
+                            if progress['value'] == 100:
+                                speak('File Downloaded')
                     else:
-                        self.statusMessage.set(f"Status: Download Failed")
-                        self.speedMessage.set(f"Reason: {self.downloadObject.get_errors()[0]}")
+                        self.statusMessage.set(f"   Status: Download Failed")
+                        self.speedMessage.set(f"   Reason: {self.downloadObject.get_errors()[0]}")
                         root.update_idletasks()
                         speak('Download Failed')
 
@@ -116,7 +119,7 @@ class AlDownloadManager():
                     self.downloadObject = SmartDL(url, self.destination)
                 except Exception as e:
                     print(f"Error in {e}")
-                    self.statusMessage.set(f"Status: {e}")
+                    self.statusMessage.set(f"   Status: {e}")
                     root.update_idletasks()
                 semaphore = threading.Semaphore(2)
                 threading.Thread(target=doDownload, args=(semaphore,)).start()
@@ -160,10 +163,8 @@ class AlDownloadManager():
 
         def clearReset():
             self.inputLink.set('')
+            terminate(self.downloadObject)
             downloadButton['state'] = NORMAL
-            stopButton['state'] = NORMAL
-            stopButton['bg'] = self.defaultColor
-            stopButton['text'] = "STOP"
 
         def startDownloading():
             link = entryLink.get()
@@ -251,6 +252,8 @@ class AlDownloadManager():
         entryLink.bind("<Button-3>", doPopup)
 
         root.mainloop()
+        root.quit()
 
 if __name__ == "__main__":
-    AlDownloadManager()
+    AlDownloadManager() 
+    sys.exit()
