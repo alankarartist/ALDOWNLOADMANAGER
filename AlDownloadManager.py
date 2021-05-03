@@ -232,13 +232,13 @@ class AlDownloadManager():
         progress = ttk.Progressbar(frameProgress, style="bar.Horizontal.TProgressbar", orient=HORIZONTAL, length=700, mode='determinate')
         progress.pack(fill=X, expand=1,padx=10, pady=7)
         
-        downloadButton = Button(frameAction, text="DOWNLOAD", command=lambda: startDownloading(), width=16, height=3, fg="#9cabc4", bd=0, bg='#333c4e', font=textFont)
+        downloadButton = Button(frameAction, text="DOWNLOAD", command=lambda: startDownloading(), width=16, height=2, fg="white", bd=0, bg='#16a4fa', font=textFont)
         downloadButton.grid(row=1,column=1,padx=20)
-        pauseButton = Button(frameAction, state=DISABLED, text="PAUSE", width=16, height=3, fg="#9cabc4",bd=0, bg='#333c4e', font=textFont)
+        pauseButton = Button(frameAction, state=DISABLED, text="PAUSE", width=16, height=2, fg="white",bd=0, bg='#16a4fa', font=textFont)
         pauseButton.grid(row=1,column=2,padx=20)
-        stopButton = Button(frameAction, state=DISABLED, text="STOP", width=16, height=3, fg="#9cabc4",bd=0, bg='#333c4e', font=textFont)
+        stopButton = Button(frameAction, state=DISABLED, text="STOP", width=16, height=2, fg="white",bd=0, bg='#16a4fa', font=textFont)
         stopButton.grid(row=1,column=3,padx=20)
-        clearButton = Button(frameAction, text="CLEAR", command=lambda: clearReset(), width=16, height=3, fg="#9cabc4",bd=0, bg='#333c4e', font=textFont)
+        clearButton = Button(frameAction, text="CLEAR", command=lambda: clearReset(), width=16, height=2, fg="white",bd=0, bg='#16a4fa', font=textFont)
         clearButton.grid(row=1,column=4,padx=20)
 
         menuWindow = Menu(root, tearoff=0)
@@ -253,4 +253,4 @@ class AlDownloadManager():
         root.mainloop()
 
 if __name__ == "__main__":
-    AlDownloadManager() 
+    AlDownloadManager()
