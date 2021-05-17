@@ -211,7 +211,7 @@ class AlDownloadManager():
         minimizeButton = Button(titleBar, text="-", bg='#141414', fg="#909090", borderwidth=0, command=hideScreen, font=appHighlightFont)
         minimizeButton.grid(row=0,column=2,sticky="nsew")
         titleBar.grid_columnconfigure(0,weight=1)
-        titleBar.grid_columnconfigure(1,weight=10)
+        titleBar.grid_columnconfigure(1,weight=75)
         titleBar.grid_columnconfigure(2,weight=1)
         titleBar.grid_columnconfigure(3,weight=1)
         titleBar.pack(side=TOP, fill=X)
