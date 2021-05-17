@@ -7,6 +7,7 @@ from pySmartDL import SmartDL
 import threading
 import os
 import pyttsx3
+from PIL import ImageTk, Image
 import sys
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -15,7 +16,7 @@ class AlDownloadManager():
     
     def __init__(self):
         root = Tk(className = " ALDOWNLOADMANAGER ")
-        root.geometry("700x350+1200+645")
+        root.geometry("700x360+1200+635")
         root.resizable(0,0)
         root.iconbitmap(os.path.join(cwd+'\\UI\\icons', 'aldownloadmanager.ico'))
         root.config(bg="#ffffff")
@@ -28,11 +29,26 @@ class AlDownloadManager():
         self.destinationMessage = StringVar()
         self.sizeMessage = StringVar()
         self.timeMessage = StringVar()
-        textHighlightFont = font.Font(family='Segoe UI', size=15, weight='bold')
-        appHighlightFont = font.Font(family='Segoe UI', size=12, weight='bold')
-        textFont = font.Font(family='Segoe UI', size=10, weight='bold')
+        textHighlightFont = font.Font(family='OnePlus Sans Display', size=15, weight='bold')
+        appHighlightFont = font.Font(family='OnePlus Sans Display', size=12, weight='bold')
+        textFont = font.Font(family='OnePlus Sans Text', size=10, weight='bold')
         self.destination = os.path.join(cwd,'AlDownloadManager')
+        root.overrideredirect(1)
         
+        def callback(event):
+            root.geometry("700x360+1200+635")
+
+        def showScreen(event):
+            root.deiconify()
+            root.overrideredirect(1)
+
+        def screenAppear(event):
+            root.overrideredirect(1)
+
+        def hideScreen():
+            root.overrideredirect(0)
+            root.iconify()
+
         def speak(audio):
             engine = pyttsx3.init('sapi5')
             voices = engine.getProperty('voices')
@@ -180,33 +196,30 @@ class AlDownloadManager():
             else:
                 downloadButton.flash()
 
-        appMenu = Menu(root)
-        root.config(menu=appMenu)
-        
-        menuFile = Menu(appMenu, tearoff=False, background='#333c4e', foreground='#515d70', activebackground='#16a4fa', activeforeground='white', font=appHighlightFont)
-        appMenu.add_cascade(label="File", menu=menuFile)
-
-        menuEdit = Menu(appMenu, tearoff=False, background='#333c4e', foreground='#515d70', activebackground='#16a4fa', activeforeground='white', font=appHighlightFont)
-        appMenu.add_cascade(label="Edit", menu=menuEdit)
-
-        menuDownload = Menu(appMenu, tearoff=False, background='#333c4e', foreground='#515d70', activebackground='#16a4fa', activeforeground='white', font=appHighlightFont)
-        appMenu.add_cascade(label="Download", menu=menuDownload)
-
-        menuFile.add_command(label="Clear", command=clearReset)
-        menuFile.add_command(label="Exit", command=root.destroy)
-        
-        menuEdit.add_command(label="Cut", command=lambda: cut(entryLink.get()))
-        menuEdit.add_command(label="Copy", command=lambda: copy(entryLink.get()))
-        menuEdit.add_command(label="Paste", command=lambda: paste(entryLink.get()))
-        menuEdit.add_command(label="Paste & Download", command=lambda: pasteDownload(entryLink.get()))
-        
-        menuDownload.add_command(label="Stop", command=lambda: terminate(self.downloadObject))
-        menuDownload.add_command(label="Pause/Resume", command=lambda: pauseResume(self.downloadObject))
+        titleBar = Frame(root, bg='#141414', relief=SUNKEN, bd=0)
+        icon = Image.open(os.path.join(cwd+'\\UI\\icons', 'aldownloadmanager.ico'))
+        icon = icon.resize((30,30), Image.ANTIALIAS)
+        icon = ImageTk.PhotoImage(icon)
+        iconLabel = Label(titleBar, image=icon)
+        iconLabel.photo = icon
+        iconLabel.config(bg='#141414')
+        iconLabel.grid(row=0,column=0,sticky="nsew")
+        titleLabel = Label(titleBar, text='ALDOWNLOADMANAGER', fg='#909090', bg='#141414', font=appHighlightFont)
+        titleLabel.grid(row=0,column=1,sticky="nsew")
+        closeButton = Button(titleBar, text="x", bg='#141414', fg="#909090", borderwidth=0, command=root.destroy, font=appHighlightFont)
+        closeButton.grid(row=0,column=3,sticky="nsew")
+        minimizeButton = Button(titleBar, text="-", bg='#141414', fg="#909090", borderwidth=0, command=hideScreen, font=appHighlightFont)
+        minimizeButton.grid(row=0,column=2,sticky="nsew")
+        titleBar.grid_columnconfigure(0,weight=1)
+        titleBar.grid_columnconfigure(1,weight=10)
+        titleBar.grid_columnconfigure(2,weight=1)
+        titleBar.grid_columnconfigure(3,weight=1)
+        titleBar.pack(side=TOP, fill=X)
 
         frameInput = Frame(root, relief=RIDGE, borderwidth=0, bg='#333c4e')
         frameInput.pack(fill=BOTH, expand=1)
         
-        frameStatus = LabelFrame(root, text="  Information----------------------------------------------------------------------", relief=SUNKEN, bg='#16a4fa', borderwidth=0,font=textHighlightFont,fg='white')
+        frameStatus = LabelFrame(root, text="  Information----------------------------------------------------------------------------------", relief=SUNKEN, bg='#16a4fa', borderwidth=0,font=textHighlightFont,fg='white')
         frameStatus.pack(fill=BOTH, expand=1)
         
         frameProgress = Frame(root, relief=GROOVE, borderwidth=0, bg='white')
@@ -246,14 +259,11 @@ class AlDownloadManager():
         clearButton = Button(frameAction, text="CLEAR", command=lambda: clearReset(), width=16, height=2, fg="white",bd=0, bg='#16a4fa', font=textFont)
         clearButton.grid(row=1,column=4,padx=20)
 
-        menuWindow = Menu(root, tearoff=0)
-        menuWindow.add_command(label="Cut", command=lambda: cut(entryLink.get()))
-        menuWindow.add_command(label="Copy", command=lambda: copy(entryLink.get()))
-        menuWindow.add_command(label="Paste", command=lambda: paste(entryLink.get()))
-        menuWindow.add_command(label="Paste & Download", command=lambda: pasteDownload(entryLink.get()))
-        menuWindow.add_separator()
-        menuWindow.add_command(label="Cancel", command=menuWindow.forget)
         entryLink.bind("<Button-3>", doPopup)
+
+        titleBar.bind("<B1-Motion>", callback)
+        titleBar.bind("<Button-3>", showScreen)
+        titleBar.bind("<Map>", screenAppear)
 
         root.mainloop()
         root.quit()
