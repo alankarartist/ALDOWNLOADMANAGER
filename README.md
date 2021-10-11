@@ -19,3 +19,9 @@ pip install Pillow
 1. Insert the url link. 
 2. Then click on DOWNLOAD button.
 3. Click on CLEAR button to download new file.
+
+## Contributor
+
+<a href="https://github.com/alankarartist/ALDOWNLOADMANAGER/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=alankarartist/ALDOWNLOADMANAGER" />
+</a>
