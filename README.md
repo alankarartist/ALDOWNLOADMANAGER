@@ -8,8 +8,6 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install package
 
 ```bash
 pip install pySmartDL
-pip install pyttsx3
-pip install PyAudio
 pip install Pillow
 ```
 1. If there is problem in installing PyAudio, then go to the [link](https://www.lfd.uci.edu/~gohlke/pythonlibs/) and download the package file according to the system requirements and then try to install it.
@@ -19,4 +17,5 @@ pip install Pillow
 ![](/Capture.PNG)
 
 1. Insert the url link. 
-2. Then click on Download button.
+2. Then click on DOWNLOAD button.
+3. Click on CLEAR button to download new file.

@@ -6,7 +6,6 @@ from tkinter.constants import *
 from pySmartDL import SmartDL
 import threading
 import os
-import pyttsx3
 from PIL import ImageTk, Image
 import sys
 
@@ -49,13 +48,6 @@ class AlDownloadManager():
             root.overrideredirect(0)
             root.iconify()
 
-        def speak(audio):
-            engine = pyttsx3.init('sapi5')
-            voices = engine.getProperty('voices')
-            engine.setProperty('voice', voices[0].id)
-            engine.say(audio)
-            engine.runAndWait()
-        
         def terminate(object):
             if object:
                 object.stop()
@@ -125,12 +117,12 @@ class AlDownloadManager():
                                 time.sleep(0.2)
                                 root.update_idletasks()
                             if progress['value'] == 100:
-                                speak('File Downloaded')
+                                print('File Downloaded')
                         else:
                             self.statusMessage.set(f"   Status: Download Failed")
                             self.speedMessage.set(f"   Reason: {self.downloadObject.get_errors()[0]}")
                             root.update_idletasks()
-                            speak('Download Failed')
+                            print('Download Failed')
 
             if len(url) == 0:
                 downloadButton.flash()
@@ -144,42 +136,6 @@ class AlDownloadManager():
                 semaphore = threading.Semaphore(2)
                 threading.Thread(target=doDownload, args=(semaphore,)).start()
                 threading.Thread(target=showProgress, args=(semaphore,)).start()
-
-        def doPopup(event):
-            try:
-                menuWindow.tk_popup(event.x_root, event.y_root)
-            finally:
-                menuWindow.grab_release()
-
-        def cut(__input__):
-            i = __input__
-            entryLink.clipboard_clear()
-            entryLink.clipboard_append(i)
-            self.inputLink.set('')
-
-        def copy(__input__):
-            i = __input__
-            entryLink.clipboard_clear()
-            entryLink.clipboard_append(i)
-
-        def paste(__input__):
-            i0 = __input__
-            i1 = entryLink.clipboard_get()
-            print(i1)
-            self.inputLink.set(i0 + i1)
-
-        def pasteDownload(__input__):
-            i0 = __input__
-            i1 = entryLink.clipboard_get()
-            self.inputLink.set(i0 + i1)
-            link = entryLink.get()
-            if link != '':
-                download(link)
-                downloadButton.flash()
-                downloadButton['state'] = DISABLED
-                self.defaultColor = stopButton.cget('background')
-            else:
-                downloadButton.flash()
 
         def clearReset():
             self.inputLink.set('')
@@ -258,8 +214,6 @@ class AlDownloadManager():
         stopButton.grid(row=1,column=3,padx=20)
         clearButton = Button(frameAction, text="CLEAR", command=lambda: clearReset(), width=16, height=2, fg="white",bd=0, bg='#16a4fa', font=textFont)
         clearButton.grid(row=1,column=4,padx=20)
-
-        entryLink.bind("<Button-3>", doPopup)
 
         titleBar.bind("<B1-Motion>", callback)
         titleBar.bind("<Button-3>", showScreen)
