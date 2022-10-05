@@ -9,8 +9,10 @@ import threading
 import os
 from PIL import ImageTk, Image
 import sys
+import platform
 
 cwd = os.path.dirname(os.path.realpath(__file__))
+systemName = platform.system()
 
 
 class AlDownloadManager():
@@ -19,8 +21,11 @@ class AlDownloadManager():
         root = Tk(className=" ALDOWNLOADMANAGER ")
         root.geometry("700x360+1200+635")
         root.resizable(0, 0)
-        root.iconbitmap(os.path.join(cwd+'\\UI\\icons',
-                                     'aldownloadmanager.ico'))
+        iconPath = os.path.join(cwd+'\\UI\\icons',
+                                'aldownloadmanager.ico')
+        if systemName == 'Darwin':
+            iconPath = iconPath.replace('\\','/')
+        root.iconbitmap(iconPath)
         root.config(bg="#ffffff")
         self.defaultColor = ''
         self.isPaused = False
@@ -187,8 +192,7 @@ class AlDownloadManager():
                 downloadButton.flash()
 
         titleBar = Frame(root, bg='#141414', relief=SUNKEN, bd=0)
-        icon = Image.open(os.path.join(cwd+'\\UI\\icons',
-                                       'aldownloadmanager.ico'))
+        icon = Image.open(iconPath)
         icon = icon.resize((30, 30), Image.ANTIALIAS)
         icon = ImageTk.PhotoImage(icon)
         iconLabel = Label(titleBar, image=icon)
