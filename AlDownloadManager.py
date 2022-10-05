@@ -294,7 +294,8 @@ class AlDownloadManager():
         titleBar.bind("<Button-3>", showScreen)
         titleBar.bind("<Map>", screenAppear)
 
-        liftWindow()
+        if systemName == 'Windows':
+            liftWindow()
         root.mainloop()
         root.quit()
 
