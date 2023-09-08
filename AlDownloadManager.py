@@ -9,10 +9,8 @@ import threading
 import os
 from PIL import ImageTk, Image
 import sys
-import platform
 
 cwd = os.path.dirname(os.path.realpath(__file__))
-systemName = platform.system()
 
 
 class AlDownloadManager():
@@ -23,8 +21,6 @@ class AlDownloadManager():
         root.resizable(0, 0)
         iconPath = os.path.join(cwd+'\\UI\\icons',
                                 'aldownloadmanager.ico')
-        if systemName == 'Darwin':
-            iconPath = iconPath.replace('\\','/')
         root.iconbitmap(iconPath)
         root.config(bg="#ffffff")
         self.defaultColor = ''
@@ -294,8 +290,7 @@ class AlDownloadManager():
         titleBar.bind("<Button-3>", showScreen)
         titleBar.bind("<Map>", screenAppear)
 
-        if systemName == 'Windows':
-            liftWindow()
+        liftWindow()
         root.mainloop()
         root.quit()
 
